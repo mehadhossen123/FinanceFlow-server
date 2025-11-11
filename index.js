@@ -45,7 +45,7 @@ const firebaseCheckToken = async (req, res, next) => {
   }
 };
 
-
+// user and password
 const user = process.env.USER_NAME;
 const password = process.env.USER_PASSWORD;
 
