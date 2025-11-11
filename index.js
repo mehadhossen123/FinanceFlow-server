@@ -89,7 +89,7 @@ async function run() {
         if (!email) {
           return res.status(400).send({ message: "Email doesn't exist" });
         }
-        const result = await AddCollection.find({ email }).toArray();
+        const result = await  AddCollection.find({ email }).sort({amount:-1,date:-1}).toArray();
         res.send(result);
       } catch (error) {
         res.status(500).send({ message: "Something went wrong " });
