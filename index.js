@@ -146,9 +146,7 @@ async function run() {
         const id = req.params.id;
         const email = req.query.email;
         const query = { _id: new ObjectId(id) };
-        if (email !== req.token_email) {
-          return res.status(403).send({ message: "Unauthorized User " });
-        }
+       
         const update = {
           $set: updateTransaction,
         };
