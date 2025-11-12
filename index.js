@@ -15,35 +15,35 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const firebaseCheckToken = async (req, res, next) => {
-  const authorization = req.headers.authorization;
+// const firebaseCheckToken = async (req, res, next) => {
+//   const authorization = req.headers.authorization;
 
   
-  if (!authorization) {
-    return res
-      .status(401)
-      .send({ message: "No authorization header provided" });
-  }
+//   if (!authorization) {
+//     return res
+//       .status(401)
+//       .send({ message: "No authorization header provided" });
+//   }
 
-  const token = authorization.split(" ")[1];
-//   console.log(token)
+//   const token = authorization.split(" ")[1];
+// //   console.log(token)
 
   
-  if (!token) {
-    return res.status(401).send({ message: "No token found in header" });
-  }
+//   if (!token) {
+//     return res.status(401).send({ message: "No token found in header" });
+//   }
 
-  try {
-    // 🔹 Step 3: Verify token
-    const decoded = await admin.auth().verifyIdToken(token);
-    req.token_email = decoded.email;
-    // console.log("✅ Token verified for:", decoded.email);
-    next();
-  } catch (e) {
-    // 🔹 Step 4: Handle invalid token
-    return res.status(401).send({ message: "Invalid or expired token" });
-  }
-};
+//   try {
+//     // 🔹 Step 3: Verify token
+//     const decoded = await admin.auth().verifyIdToken(token);
+//     req.token_email = decoded.email;
+//     // console.log("✅ Token verified for:", decoded.email);
+//     next();
+//   } catch (e) {
+//     // 🔹 Step 4: Handle invalid token
+//     return res.status(401).send({ message: "Invalid or expired token" });
+//   }
+// };
 
 // user and password
 const user = process.env.USER_NAME;
@@ -77,14 +77,10 @@ async function run() {
 
     // get data base into data
 
-    app.get("/add", firebaseCheckToken, async (req, res) => {
+    app.get("/add",  async (req, res) => {
       try {
         const email = req.query.email;
-        const email1 = req.token_email;
-        console.log(email1);
-        if (email !== email1) {
-          return res.status(401).send({ message: "Something went wrong " });
-        }
+       
 
         if (!email) {
           return res.status(400).send({ message: "Email doesn't exist" });
@@ -115,14 +111,12 @@ async function run() {
     });
 
     // ✅ Delete transaction
-    app.delete("/add/delete/:id", firebaseCheckToken, async (req, res) => {
+    app.delete("/add/delete/:id",  async (req, res) => {
       try {
         const id = req.params.id;
         const email = req.query.email;
 
-        if (email !== req.token_email) {
-          return res.status(403).send({ message: "Unauthorized User" });
-        }
+       
 
         const query = { _id: new ObjectId(id) };
         const result = await AddCollection.deleteOne(query);
@@ -146,7 +140,7 @@ async function run() {
 
 
     // update specific transaction
-    app.patch("/add/update/:id", firebaseCheckToken, async (req, res) => {
+    app.patch("/add/update/:id",  async (req, res) => {
       try {
         const updateTransaction = req.body;
         const id = req.params.id;
