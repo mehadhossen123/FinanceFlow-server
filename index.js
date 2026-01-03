@@ -66,6 +66,7 @@ async function run() {
     const database = client.db("Assignment10DB");
 
     const AddCollection = database.collection("add");
+    AddCollection.createIndex({email:1,category:1})
 
     // post new transaction into database
 
@@ -75,18 +76,29 @@ async function run() {
       res.send(result);
     });
 
-    // get data base into data
+    // get all data from database
 
     app.get("/add",  async (req, res) => {
       try {
+        const {limit=8,skip=0,search=''}=req.query;
+       
+
         const email = req.query.email;
+        const query = { email };
+        if(search){
+          query.category={$regex:search,$options:"i"}
+        }
        
 
         if (!email) {
           return res.status(400).send({ message: "Email doesn't exist" });
         }
-        const result = await  AddCollection.find({ email }).sort({amount:-1,date:-1}).toArray();
-        res.send(result);
+        const result = await  AddCollection.find(query ).sort({amount:-1,date:-1}).limit(parseInt(limit)).skip(parseInt(skip)).toArray();
+        const total=await AddCollection.countDocuments(query)
+        
+        res.send({
+          result,total
+        });
       } catch (error) {
         res.status(500).send({ message: "Something went wrong " });
       }
